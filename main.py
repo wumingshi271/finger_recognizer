@@ -44,11 +44,7 @@ def is_finger_extended(landmarks, finger_idx):
     dot4 = v4[0] * v3[0] + v4[1] * v3[1]
     dot5 = v4[0] * v2[0] + v4[1] * v2[1]
 
-    if finger_idx == 0:
-        return dot4 < 0    # 适配拇指外展情况
-    else:
-        # 其他手指通过关节向量方向判断
-        return (dot4 < 0 and dot5 < 0)
+    return dot4 < 0 and dot5 < 0
 
 def main():
     # 初始化摄像头
@@ -60,7 +56,7 @@ def main():
     # 初始化手部检测器（提高最小检测置信度）
     with mp_hands.Hands(
         static_image_mode=False,
-        max_num_hands=1,  # 只检测一只手，减少干扰
+        max_num_hands=2,  # 只检测一只手，减少干扰
         min_detection_confidence=0.7,  # 提高检测置信度阈值
         min_tracking_confidence=0.7) as hands:
 
