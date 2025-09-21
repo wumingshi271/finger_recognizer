@@ -1,4 +1,3 @@
-
 import cv2
 import mediapipe as mp
 from collections import defaultdict
@@ -28,6 +27,7 @@ def is_finger_extended(landmarks, finger_idx):
     Returns:
         bool: 手指是否伸直
     """
+    root = landmarks[0]   # 掌根
     joints = finger_joints[finger_idx]
     p0 = landmarks[joints[0]]  # 根部
     p1 = landmarks[joints[1]]  # 第一关节
@@ -38,23 +38,17 @@ def is_finger_extended(landmarks, finger_idx):
     v1 = (p1.x - p0.x, p1.y - p0.y)  # 根部到第一关节
     v2 = (p2.x - p1.x, p2.y - p1.y)  # 第一到第二关节
     v3 = (p3.x - p2.x, p3.y - p2.y)  # 第二关节到指尖
+    v4 = (root.x - p0.x, root.y - p0.y) # 掌根到根部
 
     # 计算向量点积（判断方向是否一致）
-    dot1 = v1[0] * v2[0] + v1[1] * v2[1]
-    dot2 = v2[0] * v3[0] + v2[1] * v3[1]
-    dot3 = v3[0] * v1[0] + v3[1] * v1[1]
+    dot4 = v4[0] * v3[0] + v4[1] * v3[1]
+    dot5 = v4[0] * v2[0] + v4[1] * v2[1]
 
-    # 拇指结构特殊，需要额外判断与手掌的角度
     if finger_idx == 0:
-        # 拇指需要考虑与食指根部的相对位置
-        palm_center = landmarks[0]  # 手腕点作为参考
-        thumb_tip_to_palm = (p3.x - palm_center.x, p3.y - palm_center.y)
-        index_base_to_palm = (landmarks[5].x - palm_center.x, landmarks[5].y - palm_center.y)
-        dot_thumb_palm = thumb_tip_to_palm[0] * index_base_to_palm[0] + thumb_tip_to_palm[1] * index_base_to_palm[1]
-        return (dot3 > 0.002 and dot3 > 0.002) or (dot_thumb_palm < -0.06)  # 适配拇指外展情况
+        return dot4 < 0    # 适配拇指外展情况
     else:
         # 其他手指通过关节向量方向判断
-        return dot1 > 0.001 and dot2 > 0.001
+        return (dot4 < 0 and dot5 < 0)
 
 def main():
     # 初始化摄像头
