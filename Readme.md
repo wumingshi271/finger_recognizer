@@ -10,7 +10,7 @@
 
 在终端输入以下指令
 
-`pip install opencv`
+`pip install opencv-python`
 
 ### 配置mediapipe
 
