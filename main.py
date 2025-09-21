@@ -56,7 +56,7 @@ def main():
     # 初始化手部检测器（提高最小检测置信度）
     with mp_hands.Hands(
         static_image_mode=False,
-        max_num_hands=2,  # 只检测一只手，减少干扰
+        max_num_hands=2,  
         min_detection_confidence=0.7,  # 提高检测置信度阈值
         min_tracking_confidence=0.7) as hands:
 
