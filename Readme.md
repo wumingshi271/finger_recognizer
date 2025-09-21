@@ -17,3 +17,6 @@
 在终端输入以下指令
 
 `pip install mediapipe`
+
+# 注意
+在使用python编译器时记得加上venv的虚拟环境
